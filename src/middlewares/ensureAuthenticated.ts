@@ -15,6 +15,7 @@ export default function ensureAuthenticated(
   response: Response,
   next: NextFunction
 ): void {
+  // Validação do token JWT
   const authHeader = request.headers.authorization;
 
   if (!authHeader) {
@@ -24,10 +25,16 @@ export default function ensureAuthenticated(
   const [, token] = authHeader.split(' ');
 
   try {
+    // Verifica se o token é válido.
     const decoded = verify(token, authConfig.jwt.secret);
 
+    // Forçando o tipo da variável 'decode'.
     const { sub } = decoded as TokenPayload;
 
+    /**
+     * Add o id do usuário na requisição para ser utilizado em qualquer rota que for chamada
+     * depois deste middleware.
+     */
     request.user = {
       id: sub,
     };

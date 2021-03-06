@@ -21,10 +21,14 @@ class UpdateUserAvatarService {
       throw new AppError('Only authenticated users can change avatar.', 401);
     }
 
+    // Se o avatar já existe deleta o avatar anterior e atualiza
     if (user.avatar) {
       const userAvatarFilePath = path.join(uploadConfig.directory, user.avatar);
+
+      // verifica se o arquivo existe.
       const userAvatarFileExists = await fs.promises.stat(userAvatarFilePath);
 
+      // Se o arquivo existe, ele é deletado.
       if (userAvatarFileExists) {
         await fs.promises.unlink(userAvatarFilePath);
       }
@@ -32,6 +36,7 @@ class UpdateUserAvatarService {
 
     user.avatar = avatarFilename;
 
+    // Atualiza o avatar no BD
     await usersRepository.save(user);
 
     return user;

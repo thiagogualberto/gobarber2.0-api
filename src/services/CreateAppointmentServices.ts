@@ -25,14 +25,16 @@ class CreateAppointmentService {
     );
 
     if (findAppointmentInSameDate) {
-      throw AppError('This appointment is already booked.');
+      throw new AppError('This appointment is already booked.');
     }
 
+    // Cria a instância do BD, mas não salva no BD
     const appointment = appointmentsRepository.create({
       provider_id,
       date: appointmentDate,
     });
 
+    // Salva no BD
     await appointmentsRepository.save(appointment);
 
     return appointment;
